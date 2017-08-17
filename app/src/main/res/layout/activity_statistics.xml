@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/chartWorld"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/chartAfrica"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/chartAsia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/chartAustralia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/chartEurope"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/chartLatinamerica"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/chartNA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

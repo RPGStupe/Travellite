@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/map_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/background_map"/>
+
+        <FrameLayout
+            android:id="@+id/map_frame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"></FrameLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/content_layout"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:id="@+id/layout_menu_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+
+            <ImageButton
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/btn_menu_countries"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@drawable/shape_circle_button"
+                android:elevation="5dp"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_countries_icon" />
+
+            <ImageButton
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/btn_menu_statistics"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@drawable/shape_circle_button"
+                android:elevation="5dp"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_statistics_icon" />
+
+            <ImageButton
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/btn_menu_journal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="25dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@drawable/shape_circle_button"
+                android:elevation="5dp"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_journal_icon" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:id="@+id/tv_menu_countries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/menu_countries" />
+
+            <TextView
+                android:id="@+id/tv_menu_statistics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/menu_statistics" />
+
+            <TextView
+                android:id="@+id/tv_menu_journal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/menu_journal" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/admob_adview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/ad_footer"/>
+
+</RelativeLayout>

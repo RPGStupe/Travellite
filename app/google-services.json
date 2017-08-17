@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "883512244624",
+    "firebase_url": "https://travellite-a393b.firebaseio.com",
+    "project_id": "travellite-a393b",
+    "storage_bucket": "travellite-a393b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883512244624:android:84218e2a7cbd232d",
+        "android_client_info": {
+          "package_name": "de.rpgstupe.travellite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883512244624-6cu07m17hak8sq6f1f95ed48vg2jl55c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.rpgstupe.travellite",
+            "certificate_hash": "ea3160fd6e9e4bea380d166c42db7d668f449fdd"
+          }
+        },
+        {
+          "client_id": "883512244624-tinjvpvduceivktue4del13q4u12avv7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXF2H9ZA-2rE-F9i1ZNElfseARc2dHvRs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883512244624-tinjvpvduceivktue4del13q4u12avv7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

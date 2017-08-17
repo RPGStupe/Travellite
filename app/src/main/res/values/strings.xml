@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Travellite</string>
+    <string name="ad_footer">ca-app-pub-3988713445600192/7131289644</string>
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="information_message">Travellite by AlpaccaApps\n\nThank you for your support!</string>
+    <string name="information_title">Information</string>
+    <string name="close">close</string>
+    <string name="saved">saved!</string>
+    <string name="world">World</string>
+    <string name="latinamerica">Latin America</string>
+    <string name="northamerica">North America</string>
+    <string name="europe">Europe</string>
+    <string name="asia">Asia</string>
+    <string name="africa">Africa</string>
+    <string name="australia">Australia</string>
+    <string name="title">Title</string>
+    <string name="notes">Notes</string>
+    <string name="menu_countries">Countries</string>
+    <string name="menu_statistics">Statistics</string>
+    <string name="menu_journal">Journal</string>
+
+    <string name="review_primary">Do you love Travellite?</string>
+    <string name="review_secondary">A review in Play Store is helping us a LOT</string>
+    <string name="review_button">Review</string>
+    <string name="later">LATER</string>
+    <string name="never">NEVER</string>
+    <string name="donate">Love Travellite?\nSupport us with a donation</string>
+    <string name="donate_thanks">Thank you for donating!</string>
+    <string name="donate_small">Donate 1$</string>
+    <string name="donate_medium">Donate 2$</string>
+    <string name="donate_large">Donate 5$</string>
+    <string name="dialog_title_journal">Choose an option</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="edit_journal_entry">Edit journal entry</string>
+    <string name="no_empty_title">Enter a title!</string>
+</resources>

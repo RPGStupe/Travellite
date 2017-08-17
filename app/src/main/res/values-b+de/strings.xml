@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Travellite</string>
+    <string name="ad_footer">ca-app-pub-3988713445600192/7131289644</string>
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="information_message">Travellite von AlpaccaApps\n\nDanke für deine Unterstützung!</string>
+    <string name="information_title">Information</string>
+    <string name="close">Schließen</string>
+    <string name="saved">Gespeichert!</string>
+    <string name="world">Welt</string>
+    <string name="latinamerica">Südamerika</string>
+    <string name="northamerica">Nordamerika</string>
+    <string name="europe">Europa</string>
+    <string name="asia">Asien</string>
+    <string name="africa">Afrika</string>
+    <string name="australia">Australien</string>
+    <string name="menu_countries">Länder</string>
+    <string name="menu_statistics">Statistiken</string>
+    <string name="menu_journal">Reisetagebuch</string>
+    <string name="title">Titel</string>
+    <string name="notes">Notizen</string>
+
+
+    <string name="review_primary">Dir gefällt Travellite?</string>
+    <string name="review_secondary">Eine Bewertung im Play Store hilft uns SEHR</string>
+    <string name="review_button">Bewerten</string>
+    <string name="later">SPÄTER</string>
+    <string name="never">NIE</string>
+    <string name="donate">Dir gefällt Travellite?\nUnterstütze uns mit einer Spende</string>
+    <string name="donate_thanks">Vielen Dank für die Unterstützung!</string>
+    <string name="donate_small">Spende 1€</string>
+    <string name="donate_medium">Spende 2€</string>
+    <string name="donate_large">Spende 5€</string>
+    <string name="dialog_title_journal">Wähle eine Option aus</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="delete">Löschen</string>
+    <string name="edit_journal_entry">Tagebucheintrag bearbeiten</string>
+    <string name="no_empty_title">Gib einen Titel ein!</string>
+</resources>

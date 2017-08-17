@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/warning_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFF0000"
+            android:text="" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/title"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notes"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <Button
+                android:id="@+id/btn_date"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="3dp"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="Date"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/shape_dialog_button"/>
+
+            <ImageButton
+                android:id="@+id/btn_gallery"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="3dp"
+                android:layout_weight="1"
+                android:padding="6dp"
+                app:srcCompat="@drawable/icon_gallery"
+                android:scaleType="centerInside"
+                android:background="@drawable/shape_dialog_button"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:maxHeight="200dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:layout_marginBottom="5dp">
+
+            <Button
+                android:id="@+id/btn_ok"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginRight="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_dialog_button"
+                android:text="@android:string/ok" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/shape_dialog_button"
+                android:text="@android:string/cancel" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
