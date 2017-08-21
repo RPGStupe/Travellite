@@ -114,9 +114,10 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         dataObjectHolderNormal.primaryText.setText(mDataset.get(position).getTitle() + " (" + mDataset.get(position).getDate() + ")");
         dataObjectHolderNormal.secondaryText.setText(mDataset.get(position).getNotes());
         if (mDataset.get(position).getCardImage() != null) {
-            // TODO: Make always 16:9 format
-            dataObjectHolderNormal.cardImage.setMinimumHeight((int) (200 * context.getResources().getDisplayMetrics().density));
-            dataObjectHolderNormal.cardImage.setMaxHeight((int) (200 * context.getResources().getDisplayMetrics().density));
+            double imageWidth = context.getResources().getDisplayMetrics().widthPixels / 16d;
+            double imageHeight = imageWidth*9d;
+            dataObjectHolderNormal.cardImage.setMinimumHeight((int) (imageHeight));
+            dataObjectHolderNormal.cardImage.setMaxHeight((int) (imageHeight));
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
             requestOptions.skipMemoryCache(true);
