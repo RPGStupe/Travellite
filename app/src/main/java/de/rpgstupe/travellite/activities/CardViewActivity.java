@@ -218,7 +218,6 @@ public class CardViewActivity extends AppCompatActivity {
                     if (fileUri != null) {
                         saveBitmap(bitmap, Long.toString(id));
                     }
-                    //TODO
                     notes.getText().toString();
                     mAdapter.addItem(dataObject, 0);
                     mRecyclerView.scrollToPosition(0);

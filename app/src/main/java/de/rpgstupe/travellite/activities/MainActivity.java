@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static boolean displayReviewCard = false;
     private Donations donations;
     public static GoogleApiClient mGoogleApiClient;
+    public static boolean newSignin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +96,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
-        Configuration.instance.database.getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        Configuration.instance.database.getReference("users").child(Configuration.instance.mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild(Configuration.instance.mAuth.getCurrentUser().getUid())) {
+                if (dataSnapshot.getValue() == null && newSignin) {
                     new SharedPreferencesLoader(MainActivity.this);
                 }
             }

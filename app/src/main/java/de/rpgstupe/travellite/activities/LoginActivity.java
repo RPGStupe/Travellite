@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View v) {
                 if (!signed) {
                     signInwithGoogle();
+                    MainActivity.newSignin = true;
                     signed = true;
                 }
 
