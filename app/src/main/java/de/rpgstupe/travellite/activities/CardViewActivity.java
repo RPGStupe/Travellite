@@ -2,15 +2,12 @@ package de.rpgstupe.travellite.activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,23 +23,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.firebase.storage.StorageReference;
-import com.opencsv.CSVParser;
 import com.snatik.storage.Storage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
+import java.util.List;
 
-import de.rpgstupe.travellite.DataObject;
-import de.rpgstupe.travellite.Donations;
-import de.rpgstupe.travellite.MyRecyclerViewAdapter;
+import de.rpgstupe.travellite.CardDataObject;
+import de.rpgstupe.travellite.Configuration;
 import de.rpgstupe.travellite.R;
+import de.rpgstupe.travellite.adapters.JournalAdapter;
+import de.rpgstupe.travellite.database.CardDatabaseObject;
+import de.rpgstupe.travellite.payment.Donations;
+import de.rpgstupe.travellite.utils.AdUtil;
 
 /**
  * Created by Fabian on 25.06.2017.
@@ -51,47 +49,41 @@ import de.rpgstupe.travellite.R;
 public class CardViewActivity extends AppCompatActivity {
     private int PICK_IMAGE_REQUEST = 1;
     private int CAMERA_REQUEST = 2;
-
-    private static Storage storage;
     private RecyclerView mRecyclerView;
-    private MyRecyclerViewAdapter mAdapter;
+    public static JournalAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private static String LOG_TAG = "CardViewActivity";
-    private Context context;
     private String primary;
     private String secondary;
     private String date;
-    private static String journalFilePath;
+    //    private static String journalFilePath;
     private long id;
-    private static String imageFilePath;
     private Donations donations;
+    public static Storage storage;
+    public static String path;
+    public static String imageFilePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journal);
+        storage = new Storage(getApplicationContext());
+        path = storage.getInternalFilesDirectory();
+        imageFilePath = path + "/journal_images";
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyRecyclerViewAdapter(getDataSet(), this);
+        mAdapter = new JournalAdapter(getDataSet(), this);
         mRecyclerView.setAdapter(mAdapter);
-        this.context = this;
-        initializeAds();
+        AdUtil.initializeAds((AdView) findViewById(R.id.admob_adview));
         donations = new Donations(this);
-    }
-
-    private void initializeAds() {
-        AdView mAdMobAdView = (AdView) findViewById(R.id.admob_adview);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdMobAdView.loadAd(adRequest);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapter.setOnItemClickListener(new MyRecyclerViewAdapter
+        mAdapter.setOnItemClickListener(new JournalAdapter
                 .MyClickListener() {
             @Override
             public void onItemLongClick(final int position, View v) {
@@ -103,21 +95,21 @@ public class CardViewActivity extends AppCompatActivity {
                 builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DataObject dataObject = null;
+                        CardDataObject dataObject = null;
                         switch (which) {
                             case 0: // edit
                                 dataObject = mAdapter.getmDataset().get(position);
                                 if (dataObject != null) {
                                     long id = dataObject.getId();
-                                    editJournalEntry(id, dataObject.getCardImage(), dataObject.getmText1(), dataObject.getmText2(), dataObject.getDate(), dataObject);
+                                    editJournalEntry(id, dataObject.getCardImage(), dataObject.getTitle(), dataObject.getNotes(), dataObject.getDate(), dataObject);
                                 }
                                 break;
                             case 1: // delete
                                 dataObject = mAdapter.getmDataset().get(position);
                                 if (dataObject != null) {
                                     long id = dataObject.getId();
-                                    CardViewActivity.deleteCard(id);
                                     mAdapter.deleteItem(position);
+                                    CardViewActivity.deleteCard(id);
                                 }
                                 break;
                         }
@@ -130,42 +122,13 @@ public class CardViewActivity extends AppCompatActivity {
         });
     }
 
-    private ArrayList<DataObject> getDataSet() {
-        storage = new Storage(getApplicationContext());
-        String path = storage.getInternalFilesDirectory();
-        journalFilePath = path + "/Journal.csv";
-        imageFilePath = path + "/journal_images";
+    private List<CardDataObject> getDataSet() {
 
-        if (!storage.isFileExist(journalFilePath)) {
-            storage.createFile(journalFilePath, "");
-        }
-        if (!storage.isFileExist(imageFilePath)) {
-            storage.createDirectory(imageFilePath);
-        }
-
-        ArrayList results = new ArrayList<>();
-        CSVParser parser = new CSVParser(',');
-        String content = storage.readTextFile(journalFilePath);
-        if (!"".equals(content)) {
-            String[] contentArray = content.split("\n");
-            for (final String item : contentArray) {
-                final String[] items;
-                try {
-                    items = parser.parseLine(item);
-                    results.add(new DataObject(items[1], items[2], items[3], loadImageFromStorage(items[0]), Long.parseLong(items[0])));
-                    System.out.println("TEST");
-                    StorageReference storageRef = MainActivity.storage.getReference("images/journal/" + MainActivity.mAuth.getCurrentUser().getUid());
-                    storageRef.child(items[0]).getDownloadUrl().addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            MainActivity.uploadFile(loadImageFromStorage(items[0]), items[0]);
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        List<CardDataObject> results = new ArrayList<>();
+        if (Configuration.instance.dataSnapshot != null && Configuration.instance.dataSnapshot.journal != null) {
+            for (CardDatabaseObject databaseObject : Configuration.instance.dataSnapshot.journal) {
+                results.add(new CardDataObject(databaseObject.id, databaseObject.title, databaseObject.notes, databaseObject.date));
             }
-            Collections.reverse(results);
         }
         return results;
     }
@@ -196,7 +159,7 @@ public class CardViewActivity extends AppCompatActivity {
         return true;
     }
 
-    private DataObject dataObject;
+    private CardDataObject dataObject;
 
     private void addJournalEntry() {
         bitmap = null;
@@ -221,7 +184,7 @@ public class CardViewActivity extends AppCompatActivity {
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dialog = new DatePickerDialog(CardViewActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         c.set(year, month - 1, dayOfMonth, 0, 0);
@@ -246,9 +209,9 @@ public class CardViewActivity extends AppCompatActivity {
                     secondary = notes.getText().toString();
                     date = btnDate.getText().toString();
                     id = System.currentTimeMillis();
-                    dataObject = new DataObject("", "", "", null, 0);
-                    dataObject.setmText1(primary);
-                    dataObject.setmText2(secondary);
+                    dataObject = new CardDataObject(0, "", "", "");
+                    dataObject.setTitle(primary);
+                    dataObject.setNotes(secondary);
                     dataObject.setCardImage(bitmap);
                     dataObject.setDate(date);
                     dataObject.setId(id);
@@ -259,9 +222,9 @@ public class CardViewActivity extends AppCompatActivity {
                     notes.getText().toString();
                     mAdapter.addItem(dataObject, 0);
                     mRecyclerView.scrollToPosition(0);
-                    addToCsv();
-                    MainActivity.prefs.edit().putInt("de.rpgstupe.travellite.countcards", MainActivity.prefs.getInt("de.rpgstupe.travellite.countcards", 0) + 1).apply();
-                    MainActivity.database.getReference("users").child(MainActivity.mAuth.getCurrentUser().getUid()).child("journal").setValue(getDataSet());
+//                    addToCsv();
+                    Configuration.instance.database.getReference("users").child(Configuration.instance.mAuth.getCurrentUser().getUid()).child("journal").setValue(mAdapter.getmDatasetDatabase());
+                    mAdapter.uploadAll(mAdapter.getmDataset());
                 }
             }
         });
@@ -289,8 +252,7 @@ public class CardViewActivity extends AppCompatActivity {
     }
 
 
-
-    private void editJournalEntry(final long id, Bitmap cardImage, String title, String notes, String date, final DataObject dataObject) {
+    private void editJournalEntry(final long id, byte[] cardImage, String title, String notes, String date, final CardDataObject dataObject) {
         bitmap = cardImage;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.edit_journal_entry));
@@ -300,11 +262,13 @@ public class CardViewActivity extends AppCompatActivity {
         final EditText mNotes = (EditText) viewInflated.findViewById(R.id.notes);
         mNotes.setText(notes);
         imgPreview = (ImageView) viewInflated.findViewById(R.id.img_preview);
-        imgPreview.setImageBitmap(cardImage);
+        Glide.with(this).asBitmap().load(cardImage).into(imgPreview);
         final Button btnDate = (Button) viewInflated.findViewById(R.id.btn_date);
         btnDate.setText(date);
         final Calendar c = Calendar.getInstance();
 
+        final Button mOk = (Button) viewInflated.findViewById(R.id.btn_ok);
+        final Button mCancel = (Button) viewInflated.findViewById(R.id.btn_cancel);
         final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
         final int mYear = c.get(Calendar.YEAR);
         final int mMonth = c.get(Calendar.MONTH);
@@ -312,7 +276,7 @@ public class CardViewActivity extends AppCompatActivity {
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dialog = new DatePickerDialog(CardViewActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         c.set(year, month - 1, dayOfMonth, 0, 0);
@@ -324,30 +288,31 @@ public class CardViewActivity extends AppCompatActivity {
         });
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         builder.setView(viewInflated);
-
+        final AlertDialog dialog = builder.create();
         // Set up the buttons
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        mOk.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 dialog.dismiss();
                 primary = mTitle.getText().toString();
                 secondary = mNotes.getText().toString();
                 CardViewActivity.this.date = btnDate.getText().toString();
-                dataObject.setmText1(primary);
-                dataObject.setmText2(secondary);
+                dataObject.setTitle(primary);
+                dataObject.setNotes(secondary);
                 dataObject.setCardImage(bitmap);
                 dataObject.setDate(CardViewActivity.this.date);
                 dataObject.setId(id);
                 if (fileUri != null) {
                     saveBitmap(bitmap, Long.toString(id));
                 }
-                editCsv(dataObject);
                 mAdapter.updateItems();
+                Configuration.instance.database.getReference("users").child(Configuration.instance.mAuth.getCurrentUser().getUid()).child("journal").setValue(mAdapter.getmDatasetDatabase());
+                mAdapter.uploadAll(mAdapter.getmDataset());
             }
         });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 dialog.cancel();
             }
         });
@@ -363,55 +328,16 @@ public class CardViewActivity extends AppCompatActivity {
             }
         });
         //TODO camera implementation
-        builder.show();
+        dialog.show();
     }
 
-    private void editCsv(DataObject dataObject)  {
-        long id = dataObject.getId();
-        String content = storage.readTextFile(journalFilePath);
-        String[] lines = content.split(System.getProperty("line.separator"));
-        System.out.println("ID1: " + id);
-        for (int i = 0; i < lines.length; i++) {
-            System.out.println(lines[i]);
-            if (lines[i].startsWith(Long.toString(id))) {
-                System.out.println("READY TO WRITE");
-                lines[i] = id + "," + dataObject.getmText1() + "," + dataObject.getmText2() + "," + dataObject.getDate();
-            }
-        }
-        StringBuilder finalStringBuilder = new StringBuilder();
-        for (String s : lines) {
-            if (!s.equals("")) {
-                finalStringBuilder.append(s).append(System.getProperty("line.separator"));
-            }
-        }
-        String newContent = finalStringBuilder.toString();
-        System.out.println(newContent);
-        storage.createFile(journalFilePath, newContent);
-    }
-
-
-    private void saveBitmap(Bitmap bitmap, String name) {
+    private void saveBitmap(byte[] bitmap, String name) {
         storage.createFile(imageFilePath + name, bitmap);
-        MainActivity.uploadFile(bitmap, name);
     }
-
-    private Bitmap loadImageFromStorage(String name) {
-        Bitmap b = null;
-        if (storage.isFileExist(imageFilePath + name)) {
-            byte[] imageBytes = storage.readFile(imageFilePath + name);
-            b = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-        }
-        return b;
-    }
-
-    private void addToCsv() {
-        storage.appendFile(journalFilePath, (id + "," + primary + "," + secondary + "," + date));
-    }
-
 
     private ImageView imgPreview;
     private Uri fileUri;
-    private Bitmap bitmap;
+    private byte[] bitmap;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -422,8 +348,12 @@ public class CardViewActivity extends AppCompatActivity {
             fileUri = data.getData();
 
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), fileUri);
-                imgPreview.setImageBitmap(bitmap);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), fileUri);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                Glide.with(this).asBitmap().load(byteArray).into(imgPreview);
+                this.bitmap = byteArray;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -433,20 +363,17 @@ public class CardViewActivity extends AppCompatActivity {
     }
 
     public static void deleteCard(long id) {
-        String content = storage.readTextFile(journalFilePath);
-        String[] lines = content.split(System.getProperty("line.separator"));
-        for (int i = 0; i < lines.length; i++) {
-            if (lines[i].startsWith(Long.toString(id))) {
-                lines[i] = "";
+        List<CardDataObject> dataObjectList = mAdapter.getmDataset();
+        for (int i = 0; i < dataObjectList.size(); i++) {
+            if (dataObjectList.get(i).getId() == id) {
+                mAdapter.getmDataset().remove(i);
+                break;
             }
         }
-        StringBuilder finalStringBuilder = new StringBuilder();
-        for (String s : lines) {
-            if (!s.equals("")) {
-                finalStringBuilder.append(s).append(System.getProperty("line.separator"));
-            }
-        }
-        String newContent = finalStringBuilder.toString();
-        storage.createFile(journalFilePath, newContent);
+        Configuration.instance.database.getReference("users").child(Configuration.instance.mAuth.getCurrentUser().getUid()).child("journal").setValue(mAdapter.getmDatasetDatabase());
+    }
+
+    public static void reload() {
+        mAdapter.notifyDataSetChanged();
     }
 }

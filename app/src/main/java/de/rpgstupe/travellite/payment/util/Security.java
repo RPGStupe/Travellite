@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.rpgstupe.travellite.util;
+package de.rpgstupe.travellite.payment.util;
 
 import android.text.TextUtils;
 import android.util.Base64;

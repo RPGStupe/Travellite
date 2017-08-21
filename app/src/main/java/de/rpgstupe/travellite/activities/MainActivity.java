@@ -2,15 +2,12 @@ package de.rpgstupe.travellite.activities;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,225 +18,133 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.caverock.androidsvg.SVGImageView;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
-import de.rpgstupe.travellite.DatabaseObject;
-import de.rpgstupe.travellite.Donations;
+import de.rpgstupe.travellite.Configuration;
 import de.rpgstupe.travellite.R;
+import de.rpgstupe.travellite.SharedPreferencesLoader;
 import de.rpgstupe.travellite.WorldMap;
+import de.rpgstupe.travellite.database.UserDatabaseObject;
+import de.rpgstupe.travellite.payment.Donations;
+import de.rpgstupe.travellite.utils.AdUtil;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private static final int RC_SIGN_IN = 9001;
-    public static FirebaseAuth mAuth;
-    public static SharedPreferences prefs;
-    public static String[] countryCodesList = {
-            "AFG", "AGO", "ALB", "ARE", "ARG", "ARM", "ASM", "AUS", "AUT", "AZE", "BDI",
-            "BEN", "BEL", "BFA", "BGD", "BGR", "BHR", "BHS", "BIH", "BLR", "BLZ", "BOL", "BRA",
-            "BTN", "BWA", "CAF", "CAN", "CHE", "CHL", "CHN", "CIV", "CMR", "COD", "COG", "COL",
-            "CRI", "CUB", "CYP", "CZE", "DEU", "DJI", "DNK", "DOM", "DZA", "ECU", "EGY", "ERI",
-            "ESH", "ESP", "EST", "ETH", "FIN", "FJI", "FLK", "FRA", "GAB", "GBR", "GEO", "GHA",
-            "GIN", "GMB", "GNB", "GNQ", "GRC", "GRL", "GTM", "GUF", "GUY", "HND", "HRV", "HTI",
-            "HUN", "IDN", "IND", "IRL", "IRN", "IRQ", "ISL", "ISR", "ITA", "JAM", "JOR", "JPN",
-            "KAZ", "KEN", "KGZ", "KHM", "KOR", "KWT", "LAO", "LBN", "LBR", "LBY", "LKA", "LSO",
-            "LTU", "LUX", "LVA", "MAR", "MDA", "MDG", "MEX", "MKD", "MLI", "MMR", "MNE", "MNG",
-            "MOZ", "MRT", "MWI", "MYS", "NAM", "NCL", "NER", "NGA", "NIC", "NLD", "NOR", "NPL",
-            "NZL", "OMN", "PAK", "PAN", "PER", "PHL", "PNG", "POL", "PRI", "PRK", "PRT", "PRY",
-            "QAT", "ROU", "RUS", "RWA", "SAU", "SDN", "SEN", "SGS", "SLB", "SLE", "SLV", "SOM",
-            "SRB", "SSD", "SUR", "SVK", "SVN", "SWE", "SWZ", "SYR", "TCD", "TGO", "THA", "TJK",
-            "TKM", "TLS", "TUN", "TUR", "TWN", "TZA", "UGA", "UKR", "URY", "USA", "UZB", "VEN",
-            "VNM", "YEM", "ZAF", "ZMB", "ZWE"
-    };
+    public static final int RC_SIGN_IN = 9001;
 
-    public static String[] countryCodesListAsia = {
-            "AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "KHM", "CHN", "GEO", "IND", "IDN", "IRN",
-            "IRQ", "ISR", "JPN", "JOR", "KAZ", "KWT", "KGZ", "LAO", "LBN", "MYS", "MNG", "MMR",
-            "NPL", "PRK", "OMN", "PAK", "PHL", "QAT", "SAU", "KOR", "LKA", "SYR", "TWN", "TJK",
-            "THA", "TUR", "TKM", "ARE", "UZB", "VNM", "YEM"
-    };
-
-    public static String[] countryCodesListAustralia = {
-            "ASM", "AUS", "NZL", "TLS", "FJI", "NCL", "PNG", "SLB"
-    };
-
-    public static String[] countryCodesListNA = {
-            "BHS", "BLZ", "CAN", "CRI", "CUB", "DOM", "SLV", "GRL", "GTM", "HTI", "HND", "JAM",
-            "MEX", "NIC", "PAN", "PRI", "USA"
-    };
-
-    public static String[] countryCodesListLatinAmerica = {
-            "ARG", "BOL", "BRA", "CHL", "COL", "ECU", "FLK", "GUF", "GUY", "PRY", "PER", "SUR",
-            "URY", "VEN"
-    };
-
-    public static String[] countryCodesListEurope = {
-            "ALB", "AUT", "BLR", "BEL", "BIH", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN",
-            "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LUX", "MKD", "MDA",
-            "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SRB", "SVK", "SVN", "ESP", "SWE",
-            "CHE", "UKR", "GBR"
-    };
-
-    public static String[] countryCodesListAfrica = {
-            "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "COD", "DJI",
-            "EGY", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB", "CIV", "KEN", "LSO",
-            "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA",
-            "SEN", "SLE", "SOM", "ZAF", "SSD", "SDN", "SWZ", "TZA", "TGO", "TUN", "UGA", "ZMB",
-            "ZWE"
-    };
 
     public static boolean displayReviewCard = false;
-
-    public static FirebaseDatabase database;
-    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
-    public static List<String> selectedCountryCodesList = new ArrayList<>();
-    public static int selectedCountries;
-    public static int allCountries;
     private Donations donations;
-    private boolean bDisplay;
-    private boolean bDeleted;
-    private int openedCount;
-    private int cardCount;
-    private GoogleApiClient mGoogleApiClient;
-    static FirebaseStorage storage;
+    public static GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_rework);
-        initializeSharedPrefs();
-        WorldMap worldmap = new WorldMap(new SVGImageView(this), null, this);
-        Arrays.sort(countryCodesList, new Comparator<String>() {
+        Configuration.instance.initDatabase();
+        Arrays.sort(Configuration.instance.countryCodesList, new Comparator<String>() {
             public int compare(String code1, String code2) {
                 return getResources().getString(getResources().getIdentifier(code1, "string", "de.rpgstupe.travellite"))
                         .toUpperCase().compareTo(getResources().getString(getResources().getIdentifier(code2, "string", "de.rpgstupe.travellite"))
                                 .toUpperCase());
             }
         });
-        initializeAds();
+        AdUtil.initializeAds((AdView) findViewById(R.id.admob_adview));
         setOnClickListeners();
-        //loadSharedPrefsCountries();
-        displayReviewCard = isDisplayReviewCard();
         if (displayReviewCard) {
             showReviewDialog();
         }
         donations = new Donations(this);
-        mAuth = FirebaseAuth.getInstance();
-        signInwithGoogle();
-        database = FirebaseDatabase.getInstance();
-        storage = FirebaseStorage.getInstance();
-        database.setPersistenceEnabled(true);
-    }
-
-    public static void writeNewEntry(String username, List<String> countries) {
-        DatabaseObject databaseObject = new DatabaseObject(username, countries);
-
-        database.getReference("users").child(username).child("username").setValue(username);
-        database.getReference("users").child(username).child("countries").setValue(selectedCountryCodesList);
+        init();
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+    protected void onResume() {
+        super.onResume();
+        Configuration.instance.database.getReference("users").child(Configuration.instance.mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Configuration.instance.dataSnapshot = dataSnapshot.getValue(UserDatabaseObject.class);
+                if (Configuration.instance.dataSnapshot != null && Configuration.instance.dataSnapshot.countries != null) {
+                    Configuration.instance.selectedCountryCodesList = new ArrayList<>(Configuration.instance.dataSnapshot.countries);
+                }
+                if (Configuration.instance.worldMap == null) {
+                    Configuration.instance.worldMap = new WorldMap(MainActivity.this);
+                } else {
+                    if (MainActivity.this != Configuration.instance.worldMap.getActivity()) {
+                        Configuration.instance.worldMap = new WorldMap(MainActivity.this);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    @SuppressWarnings("VisibleForTests")
-    public static void uploadFile(Bitmap bitmap, String name) {
-        if (bitmap != null) {
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference mountainImagesRef = storage.getReference("images/journal/" + mAuth.getCurrentUser().getUid() + "/" + name);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
-            byte[] data = baos.toByteArray();
-            UploadTask uploadTask = mountainImagesRef.putBytes(data);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
+    private void init() {
+        Configuration.instance.database.getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(Configuration.instance.mAuth.getCurrentUser().getUid())) {
+                    new SharedPreferencesLoader(MainActivity.this);
                 }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        Configuration.instance.database.getReference("users").child(Configuration.instance.mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Configuration.instance.dataSnapshot = dataSnapshot.getValue(UserDatabaseObject.class);
+                if (Configuration.instance.dataSnapshot != null && Configuration.instance.dataSnapshot.countries != null) {
+                    Configuration.instance.selectedCountryCodesList = new ArrayList<>(Configuration.instance.dataSnapshot.countries);
                 }
-            });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void writeNewEntry(String username) {
+        Configuration.instance.database.getReference("users").child(username).child("username").setValue(username);
+        Configuration.instance.database.getReference("users").child(username).child("countries").setValue(Configuration.instance.selectedCountryCodesList);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // very important:
+        if (donations.mBroadcastReceiver != null) {
+            unregisterReceiver(donations.mBroadcastReceiver);
         }
-    }
 
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            updateUI(null);
-                        }
-
-                        // ...
-                    }
-                });
-    }
-
-    private void updateUI(FirebaseUser user) {
-        if (user != null) {
-            database.getReference("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    DatabaseObject s = dataSnapshot.getValue(DatabaseObject.class);
-                    if (s.countries != null) {
-                        selectedCountryCodesList = new ArrayList<>(s.countries);
-                        updateMap();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+        // very important:
+        if (donations.mHelper != null) {
+            donations.mHelper.disposeWhenFinished();
+            donations.mHelper = null;
         }
     }
 
@@ -258,14 +163,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (ActivityNotFoundException e) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
                 }
-                prefs.edit().putBoolean("de.rpgstupe.travellite.reviewcarddeleted", true).apply();
             }
         });
         builder.setView(viewInflated);
         builder.setNegativeButton(R.string.never, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                prefs.edit().putBoolean("de.rpgstupe.travellite.reviewcarddeleted", true).apply();
                 dialog.cancel();
             }
         });
@@ -279,39 +182,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    protected void signInwithGoogle(){
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            } else {
-                // Google Sign In failed, update UI appropriately
-                // ...
-            }
-        }
-    }
-
 
     private void setOnClickListeners() {
         ImageButton btn_menu_countries = (ImageButton) findViewById(R.id.btn_menu_countries);
@@ -320,57 +190,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_menu_countries.setOnClickListener(this);
         btn_menu_statistics.setOnClickListener(this);
         btn_menu_journal.setOnClickListener(this);
-    }
-
-    private void initializeAds() {
-        AdView mAdMobAdView = (AdView) findViewById(R.id.admob_adview);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdMobAdView.loadAd(adRequest);
-    }
-
-    private void initializeSharedPrefs() {
-        prefs = this.getSharedPreferences(
-                "de.rpgstupe.travellite", Context.MODE_PRIVATE);
-        prefs.edit().putInt("de.rpgstupe.travellite.countopened", prefs.getInt("de.rpgstupe.travellite.countopened", 0) + 1).apply();
-    }
-
-    private void loadSharedPrefsCountries() {
-        String s = prefs.getString("de.rpgstupe.travellite.countrykeys", "");
-        bDisplay = prefs.getBoolean("de.rpgstupe.travellite.reviewcarddisplay", false);
-        bDeleted = prefs.getBoolean("de.rpgstupe.travellite.reviewcarddeleted", false);
-        cardCount = prefs.getInt("de.rpgstupe.travellite.countcards", 0);
-        openedCount = prefs.getInt("de.rpgstupe.travellite.countopened", 0);
-        String[] countryArray = s.split(",");
-        List<String> countryList = Arrays.asList(countryArray);
-
-        for (String key : countryCodesList) {
-            if (countryList.contains(key)) {
-                selectedCountryCodesList.add(key);
-                WorldMap.colorizeCountry(key, true);
-            }
-        }
-        selectedCountries = selectedCountryCodesList.size();
-        allCountries = countryCodesList.length;
-    }
-
-    private void updateMap() {
-
-        for (String key : selectedCountryCodesList) {
-                WorldMap.colorizeCountry(key, true);
-            }
-        selectedCountries = selectedCountryCodesList.size();
-        WorldMap.update();
-    }
-
-    private boolean isDisplayReviewCard() {
-
-        if (bDisplay == false) {
-            if (cardCount >= 3 && openedCount >= 10) {
-                bDisplay = true;
-                prefs.edit().putBoolean("de.rpgstupe.travellite.reviewcarddisplay", true).apply();
-            }
-        }
-        return bDisplay && !bDeleted;
     }
 
     @Override
@@ -423,20 +242,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return true;
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 }

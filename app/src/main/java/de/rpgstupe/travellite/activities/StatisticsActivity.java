@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.rpgstupe.travellite.Configuration;
 import de.rpgstupe.travellite.R;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
@@ -25,17 +26,17 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
         initializeWorld();
-        initializeContinent((PieChartView) findViewById(R.id.chartAfrica), MainActivity.countryCodesListAfrica, getResources().getString(R.string.africa));
-        initializeContinent((PieChartView) findViewById(R.id.chartAsia), MainActivity.countryCodesListAsia, getResources().getString(R.string.asia));
-        initializeContinent((PieChartView) findViewById(R.id.chartAustralia), MainActivity.countryCodesListAustralia, getResources().getString(R.string.australia));
-        initializeContinent((PieChartView) findViewById(R.id.chartEurope), MainActivity.countryCodesListEurope, getResources().getString(R.string.europe));
-        initializeContinent((PieChartView) findViewById(R.id.chartLatinamerica), MainActivity.countryCodesListLatinAmerica, getResources().getString(R.string.latinamerica));
-        initializeContinent((PieChartView) findViewById(R.id.chartNA), MainActivity.countryCodesListNA, getResources().getString(R.string.northamerica));
+        initializeContinent((PieChartView) findViewById(R.id.chartAfrica), Configuration.instance.countryCodesListAfrica, getResources().getString(R.string.africa));
+        initializeContinent((PieChartView) findViewById(R.id.chartAsia), Configuration.instance.countryCodesListAsia, getResources().getString(R.string.asia));
+        initializeContinent((PieChartView) findViewById(R.id.chartAustralia), Configuration.instance.countryCodesListAustralia, getResources().getString(R.string.australia));
+        initializeContinent((PieChartView) findViewById(R.id.chartEurope), Configuration.instance.countryCodesListEurope, getResources().getString(R.string.europe));
+        initializeContinent((PieChartView) findViewById(R.id.chartLatinamerica), Configuration.instance.countryCodesListLatinAmerica, getResources().getString(R.string.latinamerica));
+        initializeContinent((PieChartView) findViewById(R.id.chartNA), Configuration.instance.countryCodesListNA, getResources().getString(R.string.northamerica));
     }
     private void initializeContinent(PieChartView pieChartView, String[] countryCodes, String title) {
         List<String> countryCodesList = new ArrayList<>(Arrays.asList(countryCodes));
         int counter = 0;
-        for (String countryCodeSelected : MainActivity.selectedCountryCodesList) {
+        for (String countryCodeSelected : Configuration.instance.selectedCountryCodesList) {
             if (countryCodesList.contains(countryCodeSelected)) {
                 counter++;
             }
@@ -52,7 +53,11 @@ public class StatisticsActivity extends AppCompatActivity {
         pieChartView.setChartRotationEnabled(false);
         data.setCenterText1(title);
         data.setCenterText1Color(Color.GRAY);
-        data.setCenterText2(df2.format((double) counter / countryCodesList.size() * 100) + "%");
+        if ((double) counter / countryCodesList.size() * 100 == 0) {
+            data.setCenterText2("0%");
+        } else {
+            data.setCenterText2(df2.format((double) counter / countryCodesList.size() * 100) + "%");
+        }
         data.setCenterText2Color(Color.GRAY);
         pieChartView.setPieChartData(data);
     }
@@ -62,8 +67,8 @@ public class StatisticsActivity extends AppCompatActivity {
         pieChartView.setMinimumHeight(getResources().getDisplayMetrics().widthPixels);
         DecimalFormat df2 = new DecimalFormat(".##");
         List<SliceValue> values = new ArrayList<>();
-        values.add(new SliceValue(MainActivity.selectedCountries, Color.argb(255, 230, 130, 9)));
-        values.add(new SliceValue(MainActivity.allCountries - MainActivity.selectedCountries, Color.parseColor("#DBDCDE")));
+        values.add(new SliceValue(Configuration.instance.selectedCountryCodesList.size(), Color.argb(255, 230, 130, 9)));
+        values.add(new SliceValue(Configuration.instance.countryCodesList.length - Configuration.instance.selectedCountryCodesList.size(), Color.parseColor("#DBDCDE")));
         PieChartData data = new PieChartData(values);
         data.setHasCenterCircle(true);
         data.setHasLabels(true);
@@ -71,7 +76,11 @@ public class StatisticsActivity extends AppCompatActivity {
         pieChartView.setChartRotationEnabled(false);
         data.setCenterText1(getResources().getString(R.string.world));
         data.setCenterText1Color(Color.GRAY);
-        data.setCenterText2(df2.format((double) MainActivity.selectedCountries / MainActivity.allCountries * 100) + "%");
+        if ((double) Configuration.instance.selectedCountryCodesList.size() / Configuration.instance.countryCodesList.length * 100 == 0) {
+            data.setCenterText2("0%");
+        } else {
+            data.setCenterText2(df2.format((double) Configuration.instance.selectedCountryCodesList.size() / Configuration.instance.countryCodesList.length * 100) + "%");
+        }
         data.setCenterText2Color(Color.GRAY);
         pieChartView.setPieChartData(data);
     }

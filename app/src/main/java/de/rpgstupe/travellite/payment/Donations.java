@@ -1,4 +1,4 @@
-package de.rpgstupe.travellite;
+package de.rpgstupe.travellite.payment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,17 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.rpgstupe.travellite.activities.MainActivity;
-import de.rpgstupe.travellite.util.IabBroadcastReceiver;
-import de.rpgstupe.travellite.util.IabHelper;
-import de.rpgstupe.travellite.util.IabResult;
-import de.rpgstupe.travellite.util.Purchase;
+import de.rpgstupe.travellite.R;
+import de.rpgstupe.travellite.payment.util.IabBroadcastReceiver;
+import de.rpgstupe.travellite.payment.util.IabHelper;
+import de.rpgstupe.travellite.payment.util.IabResult;
+import de.rpgstupe.travellite.payment.util.Purchase;
 
 /**
  * Created by Fabian on 05.08.2017.
@@ -27,11 +22,12 @@ public class Donations implements IabBroadcastReceiver.IabBroadcastListener, Dia
     private static final String SKU_1 = "donation_1";
     private static final String SKU_2 = "donation_2";
     private static final String SKU_3 = "donation_3";
-    IabBroadcastReceiver mBroadcastReceiver;
-    IabHelper mHelper;
+    public IabBroadcastReceiver mBroadcastReceiver;
+    public IabHelper mHelper;
     String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtipBPugWTCOuIwapgtvP1UAu0wmKuXQSegZyg+1lTloNpV9NqToQyoWh0AI+w5SWt59yPzOxHc5yErbZhz2Wtk/pPcwGR1hJjTNDmMpBbM9uPe5dr3K+IqHYiEpMggiSKmi4KxPhrKOB+eQjOVNjRa3sr2q00rT9oMUE4TFJvShTQegcg/1WNwYQh/pQoWUDIPZWP6L8c3UW7MR6j/m8WCXOY92TkaKTccJ4TI48l6dptyGhbkwwdiR+1t9k5rlo2w9GGa1bgKs+0E2gex7yyrzqQD33/JxZBKPYhBPnJRSCxGGceyGDFO00oHllSEhm/cJZ2cX487+ssxBODiWr0QIDAQAB";
     Context context;
     private String mSelectedDonation;
+    public IntentFilter broadcastFilter;
 
     public Donations(final Context context) {
         this.context = context;
@@ -55,11 +51,12 @@ public class Donations implements IabBroadcastReceiver.IabBroadcastListener, Dia
                 // because this is a SAMPLE. Regardless, the receiver must be registered after
                 // IabHelper is setup, but before first call to getPurchases().
                 mBroadcastReceiver = new IabBroadcastReceiver(Donations.this);
-                IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
-                context.registerReceiver(mBroadcastReceiver, broadcastFilter);
+                broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
+                context.registerReceiver(mBroadcastReceiver,broadcastFilter);
             }
         });
     }
+
 
     public void onDonationButtonClicked() {
 

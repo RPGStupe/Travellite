@@ -1,6 +1,6 @@
 package de.rpgstupe.travellite;
 
-import android.graphics.Color;
+import android.app.Activity;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.util.Log;
@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,48 +39,42 @@ import javax.xml.transform.stream.StreamResult;
 
 import de.rpgstupe.travellite.activities.MainActivity;
 
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+
+/**
+ * Created by Fabian on 19.08.2017.
+ */
+
 public class WorldMap implements View.OnTouchListener {
-    private static String colorDeactivated;
-    public static SVGImageView svgImageView;
-    private static final String TAG = "WorldMap";
-    public static String svgString = "";
-    private MainActivity activity;
-    private Map<String, Boolean> countryMap;
-    private static String colorPrimary;
 
+    String worldMapSvg;
+    SVGImageView mWorldMap;
+    Activity activity;
 
-    public WorldMap(SVGImageView svgImageView, Map<String, Boolean> countryMap, final MainActivity activity) {
+    public WorldMap(final Activity activity) {
         this.activity = activity;
-        colorPrimary = String.format("%06X", 0xFFFFFF & activity.getResources().getColor(R.color.colorPrimary));
-        colorDeactivated = String.format("%06X", 0xFFFFFF & activity.getResources().getColor(R.color.colorDeactivated));
-        this.countryMap = countryMap;
-        this.svgImageView = svgImageView;
-        svgImageView.setScaleType(ImageView.ScaleType.MATRIX);
+        mWorldMap = new SVGImageView(activity);
+        mWorldMap.setScaleType(ImageView.ScaleType.MATRIX);
+        LinearLayout.LayoutParams mLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        ((FrameLayout) activity.findViewById(R.id.frame_world_map)).addView(mWorldMap, mLayoutParams);
+        mWorldMap.setOnTouchListener(this);
+        worldMapSvg = initializeSvgStringFromFile(activity);
 
-        LinearLayout.LayoutParams test = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        ((FrameLayout) activity.findViewById(R.id.map_frame)).addView(svgImageView, test);
-
-
-        svgImageView.setOnTouchListener(this);
-        initializeSvgStringFromFile();
-        try {
-            svgImageView.setSVG(SVG.getFromString(svgString));
-        } catch (SVGParseException e) {
-            e.printStackTrace();
-        }
-        activity.findViewById(R.id.map_frame).post(new Runnable() {
+        colorizeCountry(Configuration.instance.selectedCountryCodesList);
+        activity.findViewById(R.id.frame_world_map).post(new Runnable() {
             @Override
             public void run() {
-                setSize();
+                setSize(activity);
+                updateMap();
             }
         });
     }
 
-    private void setSize() {
+    private void setSize(Activity activity) {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(svgString));
+            InputSource is = new InputSource(new StringReader(worldMapSvg));
             Document doc = dBuilder.parse(is);
 
             Element element = doc.getDocumentElement();
@@ -91,19 +86,17 @@ public class WorldMap implements View.OnTouchListener {
             Element element2 = (Element) node;
             int width = Integer.parseInt(element2.getAttribute("width"));
             int height = Integer.parseInt(element2.getAttribute("height"));
-            element2.setAttribute("width", Integer.toString(activity.findViewById(R.id.map_frame).getWidth()));
-            element2.setAttribute("height", Double.toString(1d * height / width * activity.findViewById(R.id.map_frame).getWidth()));
-            svgImageView.setMinimumHeight(activity.findViewById(R.id.map_background).getHeight());
+            element2.setAttribute("width", Integer.toString(activity.findViewById(R.id.frame_world_map).getWidth()));
+            element2.setAttribute("height", Double.toString(1d * height / width * activity.findViewById(R.id.frame_world_map).getWidth()));
+            mWorldMap.setMinimumHeight(activity.findViewById(R.id.map_background).getHeight());
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
-            svgString = writer.toString();
-            svgImageView.setSVG(SVG.getFromString(svgString));
-        } catch (SVGParseException e) {
-            e.printStackTrace();
+            worldMapSvg = writer.toString();
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TransformerConfigurationException e) {
@@ -117,45 +110,79 @@ public class WorldMap implements View.OnTouchListener {
         }
     }
 
-    public static void colorizeCountry(String countryCode, boolean activated) {
-        System.out.println(countryCode + "    " + activated);
+    public void colorizeCountry(List<String> countryCodeList) {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(svgString));
+            InputSource is = new InputSource(new StringReader(worldMapSvg));
             Document doc = dBuilder.parse(is);
 
-            Element element = doc.getDocumentElement();
-            element.normalize();
+            Element elementSvg = doc.getDocumentElement();
+            elementSvg.normalize();
 
-            Node node = doc.getElementById("style4");
-
-
-            Element element2 = (Element) node;
-            if (!element2.getTextContent().contains("." + countryCode + "{fill:#")) {
-                element2.setTextContent(element2.getTextContent() + "." + countryCode + "{fill:#" + (activated ? colorPrimary : colorDeactivated) + "!important;}");
-            } else {
-                System.out.println(element2.getTextContent());
-                int index = element2.getTextContent().indexOf("." + countryCode + "{fill:#");
-                String s = element2.getTextContent().substring(index, index + 17);
-                String sNew = s.replaceAll("[A-Z0-9]{6}", activated ? colorPrimary : colorDeactivated);
-                element2.setTextContent(element2.getTextContent().substring(0, index) + sNew + element2.getTextContent().substring(index + 17));
-                System.out.println(element2.getTextContent());
+            Node node = doc.getElementById("styleColor");
+            Element elementStyle = (Element) node;
+            for (String countryCode : countryCodeList) {
+                if (!elementStyle.getTextContent().contains(countryCode)) {
+                    elementStyle.setTextContent(elementStyle.getTextContent().replace(".a", ".a,." + countryCode));
+                }
             }
-
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
-            svgString = writer.toString();
+            worldMapSvg = writer.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void initializeSvgStringFromFile() {
+    public void decolorizeCountry(String countryCode) {
+        List<String> countryCodeList = new ArrayList<>();
+        countryCodeList.add(countryCode);
+        decolorizeCountry(countryCodeList);
+    }
+
+    public void decolorizeCountry(List<String> countryCodeList) {
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(worldMapSvg));
+            Document doc = dBuilder.parse(is);
+
+            Element elementSvg = doc.getDocumentElement();
+            elementSvg.normalize();
+
+            Node node = doc.getElementById("styleColor");
+            Element elementStyle = (Element) node;
+            for (String countryCode : countryCodeList) {
+                if (elementStyle.getTextContent().contains(countryCode)) {
+                    elementStyle.setTextContent(elementStyle.getTextContent().replace(",." + countryCode, ""));
+                }
+            }
+            DOMSource domSource = new DOMSource(doc);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.transform(domSource, result);
+            worldMapSvg = writer.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void colorizeCountry(String countryCode) {
+        List<String> countryCodeList = new ArrayList<>();
+        countryCodeList.add(countryCode);
+        colorizeCountry(countryCodeList);
+    }
+
+
+    private String initializeSvgStringFromFile(Activity activity) {
+        String svg = null;
         try {
             InputStream is = activity.getAssets().open("world_map.svg");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -171,10 +198,45 @@ public class WorldMap implements View.OnTouchListener {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
-            svgString = writer.toString();
+            svg = writer.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return svg;
+    }
+
+    public void updateMap() {
+            activity.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        mWorldMap.setSVG(SVG.getFromString(worldMapSvg));
+                    } catch (SVGParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+    }
+
+
+    public void redraw() {
+        mWorldMap = new SVGImageView(activity);
+        mWorldMap.setScaleType(ImageView.ScaleType.MATRIX);
+        LinearLayout.LayoutParams mLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        ((FrameLayout) activity.findViewById(R.id.frame_world_map)).addView(mWorldMap, mLayoutParams);
+        mWorldMap.setOnTouchListener(this);
+        worldMapSvg = initializeSvgStringFromFile(activity);
+
+        colorizeCountry(Configuration.instance.selectedCountryCodesList);
+        activity.findViewById(R.id.frame_world_map).post(new Runnable() {
+            @Override
+            public void run() {
+                setSize(activity);
+                updateMap();
+            }
+        });
     }
 
     // These matrices will be used to move and zoom image
@@ -317,12 +379,12 @@ public class WorldMap implements View.OnTouchListener {
         point.set(x / 2, y / 2);
     }
 
-    public static void update() {
-        try {
-            System.out.println(svgString);
-            svgImageView.setSVG(SVG.getFromString(svgString));
-        } catch (SVGParseException e) {
-            e.printStackTrace();
-        }
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
+    }
+
+    public Activity getActivity() {
+        return activity;
     }
 }
+

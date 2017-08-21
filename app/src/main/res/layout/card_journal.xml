@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
         android:layout_marginTop="6dp"
         card_view:cardCornerRadius="20dp"
         card_view:cardElevation="2sp"
@@ -35,8 +35,7 @@
                     android:adjustViewBounds="true"
                     android:background="@drawable/shape_circle_image"
                     android:maxHeight="200dp"
-                    android:scaleType="centerCrop"
-                    card_view:srcCompat="@drawable/journal_test_1" />
+                    android:scaleType="centerCrop"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

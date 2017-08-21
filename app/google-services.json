@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "883512244624-9mjriid0o4u835rb49d72fe9csl2o32p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.rpgstupe.travellite",
+            "certificate_hash": "850e02073cc777e4f833f483234beaf747dd7267"
+          }
+        },
+        {
           "client_id": "883512244624-6cu07m17hak8sq6f1f95ed48vg2jl55c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -30,6 +38,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyCXF2H9ZA-2rE-F9i1ZNElfseARc2dHvRs"
+        },
+        {
+          "current_key": "AIzaSyAhapmN-XpYfYQpgkRgyIkNrIQ1f7jIVjM"
         }
       ],
       "services": {

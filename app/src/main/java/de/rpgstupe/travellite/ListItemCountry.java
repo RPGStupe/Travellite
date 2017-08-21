@@ -51,7 +51,6 @@ public class ListItemCountry extends LinearLayout {
     public void setSelected(boolean selected) {
         background.setBackgroundColor(selected ? getResources().getColor(R.color.colorPrimary) : Color.parseColor("#DBDCDE"));
         ((TextView)background.findViewById(R.id.tv_list_item_country)).setTextColor(selected ? Color.parseColor("#FFFFFF") : Color.parseColor("#97989A"));
-        WorldMap.colorizeCountry(key, selected);
         this.selected = selected;
     }
 

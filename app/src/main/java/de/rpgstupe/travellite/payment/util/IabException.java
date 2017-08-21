@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.rpgstupe.travellite.util;
+package de.rpgstupe.travellite.payment.util;
 
 /**
  * Exception thrown when something went wrong with in-app billing.

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.rpgstupe.travellite.util;
+package de.rpgstupe.travellite.payment.util;
 
 /**
  * Represents the result of an in-app billing operation.

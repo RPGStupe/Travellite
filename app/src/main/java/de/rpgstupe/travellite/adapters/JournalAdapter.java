@@ -1,4 +1,4 @@
-package de.rpgstupe.travellite;
+package de.rpgstupe.travellite.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,22 +10,56 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.ArrayList;
+import java.util.List;
+
+import de.rpgstupe.travellite.CardDataObject;
+import de.rpgstupe.travellite.R;
+import de.rpgstupe.travellite.database.CardDatabaseObject;
+import de.rpgstupe.travellite.utils.DatabaseUtil;
 
 /**
  * Created by Fabian on 25.06.2017.
  */
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static String LOG_TAG = "MyRecyclerViewAdapter";
+public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static String LOG_TAG = "JournalAdapter";
     private final Context context;
+    private CardDatabaseObject mDatasetDatabase;
 
-    public ArrayList<DataObject> getmDataset() {
+    public List<CardDataObject> getmDataset() {
         return mDataset;
     }
 
-    private ArrayList<DataObject> mDataset;
+    private List<CardDataObject> mDataset;
     private static MyClickListener myClickListener;
+
+    public List<CardDatabaseObject> getmDatasetDatabase() {
+        List<CardDatabaseObject> cardDatabaseObjectList = new ArrayList<>();
+        for (CardDataObject cardData : mDataset) {
+            cardDatabaseObjectList.add(new CardDatabaseObject(cardData));
+        }
+        return cardDatabaseObjectList;
+    }
+
+    public static List<CardDatabaseObject> getmDatasetDatabase(List<CardDataObject> mDataset) {
+        List<CardDatabaseObject> cardDatabaseObjectList = new ArrayList<>();
+        for (CardDataObject cardData : mDataset) {
+            cardDatabaseObjectList.add(new CardDatabaseObject(cardData));
+        }
+        return cardDatabaseObjectList;
+    }
+
+    public static void uploadAll(List<CardDataObject> cardDataObjectList) {
+        for (CardDataObject cardDataObject : cardDataObjectList) {
+            DatabaseUtil.uploadFile(cardDataObject.getCardImage(), Long.toString(cardDataObject.getId()));
+        }
+    }
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
@@ -59,7 +93,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.myClickListener = myClickListener;
     }
 
-    public MyRecyclerViewAdapter(ArrayList<DataObject> myDataset, Context context) {
+    public JournalAdapter(List<CardDataObject> myDataset, Context context) {
         mDataset = myDataset;
         this.context = context;
     }
@@ -77,18 +111,23 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         DataObjectHolder dataObjectHolderNormal = (DataObjectHolder) holder;
-        dataObjectHolderNormal.primaryText.setText(mDataset.get(position).getmText1() + " (" + mDataset.get(position).getDate() + ")");
-        dataObjectHolderNormal.secondaryText.setText(mDataset.get(position).getmText2());
+        dataObjectHolderNormal.primaryText.setText(mDataset.get(position).getTitle() + " (" + mDataset.get(position).getDate() + ")");
+        dataObjectHolderNormal.secondaryText.setText(mDataset.get(position).getNotes());
         if (mDataset.get(position).getCardImage() != null) {
-            dataObjectHolderNormal.cardImage.setImageBitmap(mDataset.get(position).getCardImage());
-            dataObjectHolderNormal.cardImage.setMaxHeight((int) (300 * context.getResources().getDisplayMetrics().density));
+            // TODO: Make always 16:9 format
+            dataObjectHolderNormal.cardImage.setMinimumHeight((int) (200 * context.getResources().getDisplayMetrics().density));
+            dataObjectHolderNormal.cardImage.setMaxHeight((int) (200 * context.getResources().getDisplayMetrics().density));
+            RequestOptions requestOptions = new RequestOptions();
+            requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+            requestOptions.skipMemoryCache(true);
+            Glide.with(context).applyDefaultRequestOptions(requestOptions).asBitmap().load(mDataset.get(position).getCardImage()).transition(BitmapTransitionOptions.withCrossFade()).into(dataObjectHolderNormal.cardImage);
         } else {
             dataObjectHolderNormal.cardImage.setImageBitmap(null);
             dataObjectHolderNormal.cardImage.setMaxHeight(0);
         }
     }
 
-    public void addItem(DataObject dataObj, int index) {
+    public void addItem(CardDataObject dataObj, int index) {
         mDataset.add(index, dataObj);
         notifyItemInserted(index);
         notifyItemRangeChanged(0, getmDataset().size());
@@ -104,7 +143,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyItemRangeChanged(index, getmDataset().size());
     }
 
-    public DataObject getDataObject(int position) {
+    public CardDataObject getDataObject(int position) {
         return mDataset.get(position);
     }
 
