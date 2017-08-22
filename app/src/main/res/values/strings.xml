@@ -34,4 +34,5 @@
     <string name="delete">Delete</string>
     <string name="edit_journal_entry">Edit journal entry</string>
     <string name="no_empty_title">Enter a title!</string>
+    <string name="nothing_here">Nothing here!\nAdd a new entry</string>
 </resources>

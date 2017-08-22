@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.rpgstupe.travellite.CardDataObject;
 import de.rpgstupe.travellite.R;
+import de.rpgstupe.travellite.activities.CardViewActivity;
 import de.rpgstupe.travellite.database.CardDatabaseObject;
 import de.rpgstupe.travellite.utils.DatabaseUtil;
 
@@ -115,7 +116,7 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         dataObjectHolderNormal.secondaryText.setText(mDataset.get(position).getNotes());
         if (mDataset.get(position).getCardImage() != null) {
             double imageWidth = context.getResources().getDisplayMetrics().widthPixels / 16d;
-            double imageHeight = imageWidth*9d;
+            double imageHeight = imageWidth * 9d;
             dataObjectHolderNormal.cardImage.setMinimumHeight((int) (imageHeight));
             dataObjectHolderNormal.cardImage.setMaxHeight((int) (imageHeight));
             RequestOptions requestOptions = new RequestOptions();
@@ -126,12 +127,21 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             dataObjectHolderNormal.cardImage.setImageBitmap(null);
             dataObjectHolderNormal.cardImage.setMaxHeight(0);
         }
+        if (getmDataset().size() == 0) {
+            CardViewActivity.mPlus.setVisibility(View.VISIBLE);
+            CardViewActivity.mNothingHere.setVisibility(View.VISIBLE);
+        } else {
+            CardViewActivity.mPlus.setVisibility(View.INVISIBLE);
+            CardViewActivity.mNothingHere.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void addItem(CardDataObject dataObj, int index) {
         mDataset.add(index, dataObj);
         notifyItemInserted(index);
         notifyItemRangeChanged(0, getmDataset().size());
+        CardViewActivity.mPlus.setVisibility(View.INVISIBLE);
+        CardViewActivity.mNothingHere.setVisibility(View.INVISIBLE);
     }
 
     public void updateItems() {
@@ -142,6 +152,10 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mDataset.remove(index);
         notifyItemRemoved(index);
         notifyItemRangeChanged(index, getmDataset().size());
+        if (getmDataset().size() == 0) {
+            CardViewActivity.mPlus.setVisibility(View.VISIBLE);
+            CardViewActivity.mNothingHere.setVisibility(View.VISIBLE);
+        }
     }
 
     public CardDataObject getDataObject(int position) {

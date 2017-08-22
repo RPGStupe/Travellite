@@ -61,6 +61,8 @@ public class CardViewActivity extends AppCompatActivity {
     public static Storage storage;
     public static String path;
     public static String imageFilePath;
+    public static ImageView mPlus;
+    public static TextView mNothingHere;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +71,14 @@ public class CardViewActivity extends AppCompatActivity {
         storage = new Storage(getApplicationContext());
         path = storage.getInternalFilesDirectory();
         imageFilePath = path + "/journal_images";
-
-
+        mPlus = (ImageView) findViewById(R.id.btn_plus);
+        mNothingHere = (TextView) findViewById(R.id.nothing_here);
+        mPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addJournalEntry();
+            }
+        });
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -123,7 +131,6 @@ public class CardViewActivity extends AppCompatActivity {
     }
 
     private List<CardDataObject> getDataSet() {
-
         List<CardDataObject> results = new ArrayList<>();
         if (Configuration.instance.dataSnapshot != null && Configuration.instance.dataSnapshot.journal != null) {
             for (CardDatabaseObject databaseObject : Configuration.instance.dataSnapshot.journal) {
