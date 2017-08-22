@@ -19,83 +19,70 @@ public enum Configuration {
     instance;
 
     public String[] countryCodesList = {
-            "AFG", "AGO", "ALB", "ARE", "ARG", "ARM", "ASM", "AUS", "AUT", "AZE", "BDI",
-            "BEN", "BEL", "BFA", "BGD", "BGR", "BHR", "BHS", "BIH", "BLR", "BLZ", "BOL", "BRA",
-            "BTN", "BWA", "CAF", "CAN", "CHE", "CHL", "CHN", "CIV", "CMR", "COD", "COG", "COL",
-            "CRI", "CUB", "CYP", "CZE", "DEU", "DJI", "DNK", "DOM", "DZA", "ECU", "EGY", "ERI",
-            "ESH", "ESP", "EST", "ETH", "FIN", "FJI", "FLK", "FRA", "GAB", "GBR", "GEO", "GHA",
-            "GIN", "GMB", "GNB", "GNQ", "GRC", "GRL", "GTM", "GUF", "GUY", "HND", "HRV", "HTI",
-            "HUN", "IDN", "IND", "IRL", "IRN", "IRQ", "ISL", "ISR", "ITA", "JAM", "JOR", "JPN",
-            "KAZ", "KEN", "KGZ", "KHM", "KOR", "KWT", "LAO", "LBN", "LBR", "LBY", "LKA", "LSO",
-            "LTU", "LUX", "LVA", "MAR", "MDA", "MDG", "MEX", "MKD", "MLI", "MMR", "MNE", "MNG",
-            "MOZ", "MRT", "MWI", "MYS", "NAM", "NCL", "NER", "NGA", "NIC", "NLD", "NOR", "NPL",
-            "NZL", "OMN", "PAK", "PAN", "PER", "PHL", "PNG", "POL", "PRI", "PRK", "PRT", "PRY",
-            "QAT", "ROU", "RUS", "RWA", "SAU", "SDN", "SEN", "SGS", "SLB", "SLE", "SLV", "SOM",
-            "SRB", "SSD", "SUR", "SVK", "SVN", "SWE", "SWZ", "SYR", "TCD", "TGO", "THA", "TJK",
-            "TKM", "TLS", "TUN", "TUR", "TWN", "TZA", "UGA", "UKR", "URY", "USA", "UZB", "VEN",
-            "VNM", "YEM", "ZAF", "ZMB", "ZWE"
+            "AFG", "EGY", "ALA", "ALB", "DZA", "ASM", "VIR", "AND", "AGO", "AIA", "ATA", "ATG",
+            "GNQ", "ARG", "ARM", "ABW", "ASC", "AZE", "ETH", "AUS", "BHS", "BHR", "BGD", "BRB",
+            "BEL", "BLZ", "BEN", "BMU", "BTN", "BOL", "BIH", "BWA", "BVT", "BRA", "VGB", "IOT",
+            "BRN", "BGR", "BFA", "BDI", "CHL", "CHN", "COK", "CRI", "DNK", "DEU", "SHN", "DGA",
+            "DMA", "DOM", "DJI", "ECU", "SLV", "ERI", "EST", "FLK", "FRO", "FJI", "FIN", "FRA",
+            "GUF", "PYF", "ATF", "GAB", "GMB", "GEO", "GHA", "GIB", "GRD", "GRC", "GRL", "GLP",
+            "GUM", "GTM", "GGY", "GIN", "GNB", "GUY", "HTI", "HMD", "HND", "HKG", "IND", "IDN",
+            "IRQ", "IRN", "IRL", "ISL", "IMN", "ISR", "ITA", "JAM", "JPN", "YEM", "JEY", "JOR",
+            "CYM", "KHM", "CMR", "CAN", "CPV", "KAZ", "QAT", "KEN", "KGZ", "KIR", "CCK", "COL",
+            "COM", "COD", "HRV", "CUB", "KWT", "LAO", "LSO", "LVA", "LBN", "LBR", "LBY", "LIE",
+            "LTU", "LUX", "MAC", "MDG", "MWI", "MYS", "MDV", "MLI", "MLT", "MAR", "MHL", "MTQ",
+            "MRT", "MUS", "MYT", "MKD", "MEX", "FSM", "MDA", "MCO", "MNG", "MNE", "MSR", "MOZ",
+            "MMR", "NAM", "NRU", "NPL", "NCL", "NZL", "NTZ", "NIC", "NLD", "ANT", "NER", "NGA",
+            "NIU", "PRK", "MNP", "NFK", "NOR", "OMN", "AUT", "TLS", "PAK", "PSE", "PLW", "PAN",
+            "PNG", "PRY", "PER", "PHL", "PCN", "POL", "PRT", "PRI", "CIV", "COG", "REU", "RWA",
+            "ROU", "RUS", "SLB", "ZMB", "WSM", "SMR", "STP", "SAU", "SWE", "CHE", "SEN", "SRB",
+            "SCG", "SYC", "SLE", "ZWE", "SGP", "SVK", "SVN", "SOM", "SUN", "ESP", "LKA", "KNA",
+            "LCA", "SPM", "VCT", "ZAF", "SDN", "SGS", "KOR", "SUR", "SJM", "SWZ", "SYR", "TJK",
+            "TWN", "TZA", "THA", "TGO", "TKL", "TON", "TTO", "TAA", "TCD", "CZE", "TUN", "TUR",
+            "TKM", "TCA", "TUV", "UGA", "UKR", "HUN", "URY", "UZB", "VUT", "VAT", "VEN", "ARE",
+            "USA", "GBR", "VNM", "WLF", "CXR", "BLR", "ESH", "CAF", "CYP"
     };
 
 
     public String[] countryCodesListAsia = {
-            "AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "KHM", "CHN", "GEO", "IND", "IDN", "IRN",
-            "IRQ", "ISR", "JPN", "JOR", "KAZ", "KWT", "KGZ", "LAO", "LBN", "MYS", "MNG", "MMR",
-            "NPL", "PRK", "OMN", "PAK", "PHL", "QAT", "SAU", "KOR", "LKA", "SYR", "TWN", "TJK",
-            "THA", "TUR", "TKM", "ARE", "UZB", "VNM", "YEM"
-    };
-
-
-
-
-
-    public String[] countryCodesListAll = {
-            "AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "KHM", "CHN", "GEO", "IND", "IDN", "IRN",
-            "IRQ", "ISR", "JPN", "JOR", "KAZ", "KWT", "KGZ", "LAO", "LBN", "MYS", "MNG", "MMR",
-            "NPL", "PRK", "OMN", "PAK", "PHL", "QAT", "SAU", "KOR", "LKA", "SYR", "TWN", "TJK",
-            "THA", "TUR", "TKM", "ARE", "UZB", "VNM", "YEM",
-            "ASM", "AUS", "NZL", "TLS", "FJI", "NCL", "PNG", "SLB",
-            "BHS", "BLZ", "CAN", "CRI", "CUB", "DOM", "SLV", "GRL", "GTM", "HTI", "HND", "JAM",
-            "MEX", "NIC", "PAN", "PRI", "USA",
-            "ARG", "BOL", "BRA", "CHL", "COL", "ECU", "FLK", "GUF", "GUY", "PRY", "PER", "SUR",
-            "URY", "VEN",
-            "ALB", "AUT", "BLR", "BEL", "BIH", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN",
-            "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LUX", "MKD", "MDA",
-            "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SRB", "SVK", "SVN", "ESP", "SWE",
-            "CHE", "UKR", "GBR",
-            "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "COD", "DJI",
-            "EGY", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB", "CIV", "KEN", "LSO",
-            "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA",
-            "SEN", "SLE", "SOM", "ZAF", "SSD", "SDN", "SWZ", "TZA", "TGO", "TUN", "UGA", "ZMB",
-            "ZWE"
+            "AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "IOT", "BRN", "CHN", "GUM", "HKG", "IND",
+            "IDN", "IRQ", "IRN", "ISR", "JPN", "YEM", "JOR", "KHM", "KAZ", "QAT", "KGZ", "CCK",
+            "KWT", "LAO", "LBN", "MAC", "MYS", "MDV", "MNG", "MMR", "NPL", "NTZ", "PRK", "OMN",
+            "PAK", "PSE", "PHL", "RUS", "SAU", "SGP", "LKA", "KOR", "SYR", "TJK", "TWN", "THA",
+            "TUR", "TKM", "UZB", "ARE", "VNM", "CXR", "CYP"
     };
 
     public String[] countryCodesListAustralia = {
-            "ASM", "AUS", "NZL", "TLS", "FJI", "NCL", "PNG", "SLB"
+            "ASM", "AUS", "COK", "FJI", "PYF", "HMD", "KIR", "MHL", "FSM", "NRU", "NCL", "NZL",
+            "NIU", "MNP", "NFK", "TLS", "PLW", "PNG", "PCN", "SLB", "WSM", "TKL", "TON", "TUV",
+            "VUT", "WLF"
     };
 
     public String[] countryCodesListNA = {
-            "BHS", "BLZ", "CAN", "CRI", "CUB", "DOM", "SLV", "GRL", "GTM", "HTI", "HND", "JAM",
-            "MEX", "NIC", "PAN", "PRI", "USA"
+            "AIA", "ATG", "ABW", "BHS", "BRB", "BLZ", "BMU", "VGB", "CRI", "DMA", "SLV", "GRD",
+            "GRL", "GLP", "GTM", "HTI", "HND", "JAM", "CYM", "CAN", "CUB", "MTQ", "MEX", "MSR",
+            "NIC", "ANT", "PRI", "KNA", "SPM", "TCA", "USA"
     };
 
     public String[] countryCodesListLatinAmerica = {
-            "ARG", "BOL", "BRA", "CHL", "COL", "ECU", "FLK", "GUF", "GUY", "PRY", "PER", "SUR",
-            "URY", "VEN"
+            "VIR", "ARG", "BOL", "BRA", "CHL", "DOM", "ECU", "GUF", "GUY", "COL", "PAN", "PRY",
+            "PER", "LCA", "VCT", "SGS", "SUR", "TTO", "URY", "VEN"
     };
 
     public String[] countryCodesListEurope = {
-            "ALB", "AUT", "BLR", "BEL", "BIH", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN",
-            "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LUX", "MKD", "MDA",
-            "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SRB", "SVK", "SVN", "ESP", "SWE",
-            "CHE", "UKR", "GBR"
+            "ALA", "ALB", "AND", "BEL", "BIH", "BGR", "DNK", "DEU", "EST", "FRO", "FIN", "FRA",
+            "GEO", "GRC", "GGY", "IRL", "ISL", "IMN", "ITA", "JEY", "HRV", "LVA", "LIE", "LTU",
+            "LUX", "MLT", "MKD", "MDA", "MCO", "MNE", "NLD", "NOR", "AUT", "POL", "PRT", "ROU",
+            "SMR", "SWE", "CHE", "SRB", "SCG", "SVK", "SVN", "SUN", "ESP", "SJM", "CZE", "UKR",
+            "HUN", "VAT", "GBR", "BLR"
     };
 
     public String[] countryCodesListAfrica = {
-            "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CAF", "TCD", "COG", "COD", "DJI",
-            "EGY", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB", "CIV", "KEN", "LSO",
-            "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA",
-            "SEN", "SLE", "SOM", "ZAF", "SSD", "SDN", "SWZ", "TZA", "TGO", "TUN", "UGA", "ZMB",
-            "ZWE"
+            "EGY", "DZA", "AGO", "GNQ", "ASC", "ETH", "BEN", "BWA", "BFA", "BDI", "SHN", "DGA",
+            "DJI", "ERI", "FLK", "GAB", "GMB", "GHA", "GIB", "GIN", "GNB", "CMR", "CPV", "KEN",
+            "COM", "COD", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MAR", "MRT", "MUS", "MYT",
+            "MOZ", "NAM", "NER", "NGA", "CIV", "COG", "REU", "RWA", "ZMB", "STP", "SEN", "SYC",
+            "SLE", "ZWE", "SOM", "ZAF", "SDN", "SWZ", "TZA", "TGO", "TAA", "TCD", "TUN", "UGA",
+            "ESH", "CAF"
     };
 
     public List<String> selectedCountryCodesList = new ArrayList<>();
@@ -109,12 +96,13 @@ public enum Configuration {
     public List<CountryListDataObject> countryListItemsList;
     public UserDatabaseObject dataSnapshot;
 
-    public void initDatabase(){
+    public void initDatabase() {
         if (database == null) {
             database = FirebaseDatabase.getInstance();
             database.setPersistenceEnabled(true);
         }
     }
+
     public void initializeCountryListItemsList(Resources resources) {
         if (countryListItemsList == null) {
             countryListItemsList = new ArrayList<>();
