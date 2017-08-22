@@ -1,6 +1,7 @@
 package de.rpgstupe.travellite.adapters;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,8 +69,10 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
             holder.mCountryName.setText(mDataset.get(position).getCountryName());
             if (mDataset.get(position).isActivated()) {
                 holder.mCountryName.setBackgroundColor(resources.getColor(R.color.colorPrimary));
+                holder.mCountryName.setTextColor(Color.WHITE);
             } else {
                 holder.mCountryName.setBackgroundColor(resources.getColor(R.color.colorDeactivated));
+                holder.mCountryName.setTextColor(resources.getColor(R.color.colorGrey));
             }
     }
 
